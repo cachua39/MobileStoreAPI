@@ -29,7 +29,6 @@ namespace MobileStoreAPI.Models
         public virtual DbSet<TblTransaction> TblTransaction { get; set; }
         public virtual DbSet<TblTransactionDetail> TblTransactionDetail { get; set; }
 
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<AspNetRoleClaims>(entity =>
@@ -129,12 +128,11 @@ namespace MobileStoreAPI.Models
 
             modelBuilder.Entity<TblBrand>(entity =>
             {
-                entity.HasKey(e => e.BrandId)
-                    .HasName("PK__tblSuppl__4BE666B4E3C6F3AF");
+                entity.HasKey(e => e.BrandId);
 
                 entity.ToTable("tblBrand");
 
-                entity.Property(e => e.Name)
+                entity.Property(e => e.BrandName)
                     .IsRequired()
                     .HasMaxLength(50)
                     .IsUnicode(false);
@@ -238,13 +236,12 @@ namespace MobileStoreAPI.Models
                     .WithMany(p => p.TblMobile)
                     .HasForeignKey(d => d.BrandId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_tblProduct_tblSupplier1");
+                    .HasConstraintName("FK_tblMobile_tblBrand");
             });
 
             modelBuilder.Entity<TblOption>(entity =>
             {
-                entity.HasKey(e => e.OptionId)
-                    .HasName("PK__tblOptio__92C7A1FFE5A80A7D");
+                entity.HasKey(e => e.OptionId);
 
                 entity.ToTable("tblOption");
 
@@ -309,8 +306,7 @@ namespace MobileStoreAPI.Models
 
             modelBuilder.Entity<TblTransactionDetail>(entity =>
             {
-                entity.HasKey(e => e.TransactionDetailId)
-                    .HasName("PK__tblTrans__F2B27FC69B266413");
+                entity.HasKey(e => e.TransactionDetailId);
 
                 entity.ToTable("tblTransactionDetail");
 
@@ -337,7 +333,7 @@ namespace MobileStoreAPI.Models
                     .WithMany(p => p.TblTransactionDetail)
                     .HasForeignKey(d => d.MobileId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_tblTransactionDetail_tblProduct1");
+                    .HasConstraintName("FK_tblTransactionDetail_tblMobile1");
 
                 entity.HasOne(d => d.Transaction)
                     .WithMany(p => p.TblTransactionDetail)

@@ -11,7 +11,7 @@ namespace MobileStoreAPI.Models
         }
 
         public int BrandId { get; set; }
-        public string Name { get; set; }
+        public string BrandName { get; set; }
 
         public virtual ICollection<TblMobile> TblMobile { get; set; }
     }

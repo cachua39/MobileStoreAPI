@@ -21,7 +21,7 @@ namespace MobileStoreAPI.Controllers
         }
 
         // GET: api/User
-        [HttpGet("products")]
+        [HttpGet("{products}")]
         public async Task<ActionResult<IEnumerable<TblMobile>>> GetTblMobile()
         {
             var listMobile = await _context.TblMobile
@@ -34,25 +34,55 @@ namespace MobileStoreAPI.Controllers
                     m.UnitPrice,
                     m.Photo,
                     m.Status,
-                    BrandName = b.Name
+                    b.BrandName
                 }).Where(m => m.Status.Equals("Active") && 
-                    _context.TblOption.Single(op => op.MobileId == m.MobileId) != null
+                    _context.TblOption.Single(op => op.MobileId == m.MobileId && op.Quantity > 0) != null
                 ).ToListAsync();
             return Ok(listMobile);
         }
 
         // GET: api/User/5
-        [HttpGet("{id}")]
+        [HttpGet("{product}/{id}")]
         public async Task<ActionResult<TblMobile>> GetTblMobile(string id)
         {
-            var tblMobile = await _context.TblMobile.FindAsync(id);
+            var mobile = await _context.TblMobile
+                .Join(_context.TblBrand,
+                m => m.BrandId,
+                b => b.BrandId, (m, b) => new
+                {
+                    m.MobileId,
+                    m.MobileName,
+                    m.UnitPrice,
+                    m.Description,
+                    m.Photo,
+                    m.ScreenResolution,
+                    m.ScreenSize,
+                    m.OperatingSystem,
+                    m.RearCamera,
+                    m.FrontCamera,
+                    m.Cpu,
+                    m.BateryCapacity,
+                    m.Sim,
+                    m.Status,
+                    m.CreateDate,
+                    b.BrandName,
+                    Options = _context.TblOption
+                    .Select(op => new
+                    {
+                        op.MobileId,
+                        op.Ram,
+                        op.Memory,
+                        op.Color,
+                        op.Quantity,
+                        op.ExtraPrice
+                    }).Where(op => op.MobileId == m.MobileId && op.Quantity > 0).ToList()
+                }).Where(m => m.Status.Equals("Active") && m.MobileId == id).SingleAsync();
 
-            if (tblMobile == null)
+            if(mobile == null)
             {
                 return NotFound();
             }
-
-            return tblMobile;
+            return Ok(mobile);
         }
 
         // PUT: api/User/5
