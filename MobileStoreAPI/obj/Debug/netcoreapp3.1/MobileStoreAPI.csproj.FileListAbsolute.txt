@@ -132,4 +132,10 @@ D:\myProjects\vs_studio\MobileStoreAPI\MobileStoreAPI\bin\Debug\netcoreapp3.1\ru
 D:\myProjects\vs_studio\MobileStoreAPI\MobileStoreAPI\bin\Debug\netcoreapp3.1\Microsoft.AspNetCore.JsonPatch.dll
 D:\myProjects\vs_studio\MobileStoreAPI\MobileStoreAPI\bin\Debug\netcoreapp3.1\Microsoft.AspNetCore.Mvc.NewtonsoftJson.dll
 D:\myProjects\vs_studio\MobileStoreAPI\MobileStoreAPI\bin\Debug\netcoreapp3.1\Newtonsoft.Json.Bson.dll
+D:\myProjects\vs_studio\MobileStoreAPI\MobileStoreAPI\bin\Debug\netcoreapp3.1\Microsoft.WindowsAzure.Storage.dll
 D:\myProjects\vs_studio\MobileStoreAPI\MobileStoreAPI\obj\Debug\netcoreapp3.1\MobileStoreAPI.MvcApplicationPartsAssemblyInfo.cache
+D:\myProjects\vs_studio\MobileStoreAPI\MobileStoreAPI\bin\Debug\netcoreapp3.1\Microsoft.Win32.SystemEvents.dll
+D:\myProjects\vs_studio\MobileStoreAPI\MobileStoreAPI\bin\Debug\netcoreapp3.1\System.Drawing.Common.dll
+D:\myProjects\vs_studio\MobileStoreAPI\MobileStoreAPI\bin\Debug\netcoreapp3.1\runtimes\win\lib\netcoreapp3.0\Microsoft.Win32.SystemEvents.dll
+D:\myProjects\vs_studio\MobileStoreAPI\MobileStoreAPI\bin\Debug\netcoreapp3.1\runtimes\unix\lib\netcoreapp3.0\System.Drawing.Common.dll
+D:\myProjects\vs_studio\MobileStoreAPI\MobileStoreAPI\bin\Debug\netcoreapp3.1\runtimes\win\lib\netcoreapp3.0\System.Drawing.Common.dll

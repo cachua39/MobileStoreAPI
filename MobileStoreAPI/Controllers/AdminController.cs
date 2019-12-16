@@ -4,10 +4,13 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using MobileStoreAPI.Models;
+using MobileStoreAPI.Service;
 
 namespace MobileStoreAPI.Controllers
 {
@@ -16,10 +19,12 @@ namespace MobileStoreAPI.Controllers
     public class AdminController : ControllerBase
     {
         private readonly MobileStoreDBContext _context;
+        private readonly IConfiguration _configuration;
 
-        public AdminController(MobileStoreDBContext context)
+        public AdminController(MobileStoreDBContext context, IConfiguration configuration)
         {
             _context = context;
+            _configuration = configuration;
         }
 
         // GET: api/Admin
@@ -158,19 +163,30 @@ namespace MobileStoreAPI.Controllers
                 tblOptions.Add(tblOption);
             }
 
-            var phonePhoto = Request.Form.Files.GetFile("PhonePhoto");
-            if(phonePhoto.Length > 0)
-            {
-                var photoPath = Path.Combine("~/assets/products", phonePhoto.FileName);
-                using (var fileStream = new FileStream(photoPath, FileMode.Create))
-                {
-                    await phonePhoto.CopyToAsync(fileStream);
-                }
-            }
+            // Upload file to server
 
-            var photoPathToDB = Path.Combine("~/assets/products", phonePhoto.FileName);
+            #region Read File Content  
+            //var uploads = Path.Combine(env.WebRootPath, "uploads");
+            //bool exists = Directory.Exists(uploads);
+            //if (!exists)
+            //{
+            //    Directory.CreateDirectory(uploads);
+            //}
+            var phonePhotoFile = Request.Form.Files.GetFile("PhonePhoto");
+            var fileName = Path.GetFileName(phonePhotoFile.FileName);
 
-            tblMobile.Photo = photoPathToDB;
+            //var photoPath = Path.Combine("uploads", phonePhotoFile.FileName);
+            //var fileStream = new FileStream(photoPath, FileMode.Create);
+            
+            string mimeType = phonePhotoFile.ContentType;
+            byte[] fileData = new byte[phonePhotoFile.Length];
+
+            BlobStorageService objBlobService = new BlobStorageService(_configuration);
+
+            tblMobile.Photo = objBlobService.UploadFileToBlob(phonePhotoFile);
+            #endregion
+            
+            tblMobile.CreateDate = DateTime.Now;
             tblMobile.BrandId = brandId;
             tblMobile.Status = "Active";
             tblMobile.TblOption = tblOptions;
