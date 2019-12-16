@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
@@ -132,14 +133,48 @@ namespace MobileStoreAPI.Controllers
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPost("{product}")]
-        public async Task<ActionResult<TblMobile>> PostTblMobile(ArrayList list)
+        public async Task<ActionResult<TblMobile>> PostTblMobile([FromForm]TblMobile tblMobile)
         {
-            TblMobile tblMobile = Newtonsoft.Json.JsonConvert.DeserializeObject<TblMobile>(list[0].ToString());
-            TblBrand tblBrand = Newtonsoft.Json.JsonConvert.DeserializeObject<TblBrand>(list[1].ToString());
-            var brandId = await _context.TblBrand
-                .Where(b => b.BrandName.Equals(tblBrand.BrandName))
-                .Select(b => b.BrandId).FirstAsync();
+            var brandId = await _context.TblBrand.Where(b => b.BrandName.Equals(Request.Form["BrandName"])).Select(b => b.BrandId).SingleAsync();
+            
+            ICollection<TblOption> tblOptions = new List<TblOption>();
+            var listRam = Request.Form["RAM"].ToList<string>();
+            var listMemory = Request.Form["Memory"].ToList<string>();
+            var listColor = Request.Form["Color"].ToList<string>();
+            var listQuantity = Request.Form["Quantity"].ToList<string>();
+            var listPrice = Request.Form["ExtraPrice"].ToList<string>();
+            TblOption tblOption = null;
+            for (int i = 0; i < listRam.Count; i++)
+            {
+                tblOption = new TblOption
+                {
+                    MobileId = tblMobile.MobileId,
+                    Ram = listRam[i],
+                    Memory = listMemory[i],
+                    Color = listColor[i],
+                    Quantity = int.Parse(listQuantity[i]),
+                    ExtraPrice = Math.Round(float.Parse(listPrice[i]), 2)
+                };
+                tblOptions.Add(tblOption);
+            }
+
+            var phonePhoto = Request.Form.Files.GetFile("PhonePhoto");
+            if(phonePhoto.Length > 0)
+            {
+                var photoPath = Path.Combine("~/assets/products", phonePhoto.FileName);
+                using (var fileStream = new FileStream(photoPath, FileMode.Create))
+                {
+                    await phonePhoto.CopyToAsync(fileStream);
+                }
+            }
+
+            var photoPathToDB = Path.Combine("~/assets/products", phonePhoto.FileName);
+
+            tblMobile.Photo = photoPathToDB;
             tblMobile.BrandId = brandId;
+            tblMobile.Status = "Active";
+            tblMobile.TblOption = tblOptions;
+
             _context.TblMobile.Add(tblMobile);
             try
             {

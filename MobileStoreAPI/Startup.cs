@@ -29,8 +29,8 @@ namespace MobileStoreAPI
         {
             var connection = Configuration.GetConnectionString("MobileStoreConnectionString");
             services.AddDbContext<MobileStoreDBContext>(options => options.UseSqlServer(connection));
-            services.AddControllers();
-            
+            services.AddControllers().AddNewtonsoftJson(x => x.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -51,6 +51,7 @@ namespace MobileStoreAPI
             {
                 endpoints.MapControllers();
             });
+
         }
     }
 }
